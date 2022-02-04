@@ -184,3 +184,17 @@ a {
     font-size: 2rem;
   }
 }
+
+/* Animation Concept
+ * Timeline
+ *   0   1   2   3
+ * /---/---/---/---/
+ *
+ * section 0 : 4개의 animation이 적용되는 영역
+ * section 1 : 특별한 animation은 없는 영역
+ * section 2 : section 0과 비슷
+ * section 3 : canvas를 활용하는 영역
+ *
+ * 해당 영역에 해당하는 요소들만 animation이 적용되게끔 처리할 예정
+ * 이를 위해 대략적으로라도 scroll position을 정해야 함
+ */
