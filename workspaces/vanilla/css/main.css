@@ -28,11 +28,23 @@ a {
 .global-nav {
   height: 44px;
   padding: 0 1rem;
+
+  /* Animation에 영향을 미치지 않도록 DOM height에 잡히지 않게 조절하는 부분 */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
 }
 .local-nav {
   height: 52px;
   border-bottom: 1px solid #ddd;
   padding: 0 1rem;
+
+  /* Animation에 영향을 미치지 않도록 DOM height에 잡히지 않게 조절하는 부분 */
+  position: absolute;
+  top: 45px; /* global-nav가 44px이므로 45px부터 보이게 설정 */
+  left: 0;
+  width: 100%;
 }
 
 .global-nav-links,
@@ -79,9 +91,8 @@ a {
   align-items: center;
   height: 3em;
   font-size: 2.5rem;
-
-  margin: 5px 0;
-  background: rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  top: 35vh;
 }
 
 .main-message p {
@@ -113,6 +124,15 @@ a {
   margin-right: 0.2em;
   font-size: 3rem;
   color: var(--color-black);
+}
+
+#scroll-section-2 .b {
+  top: 10%;
+  left: 40%;
+}
+#scroll-section-2 .c {
+  top: 15%;
+  left: 45%;
 }
 
 .desc-message {
@@ -155,6 +175,20 @@ a {
   background: darkorange;
 }
 
+.sticky-elem {
+  display: none;
+  position: fixed;
+  left: 0;
+  width: 100%;
+}
+
+body#show-scene-0 #scroll-section-0 .sticky-elem,
+body#show-scene-1 #scroll-section-1 .sticky-elem,
+body#show-scene-2 #scroll-section-2 .sticky-elem,
+body#show-scene-3 #scroll-section-3 .sticky-elem {
+  display: block;
+}
+
 @media (min-width: 1024px) {
   #scroll-section-0 h1 {
     font-size: 9vw;
@@ -176,6 +210,13 @@ a {
   }
   .desc-message {
     width: 20%;
+  }
+  #scroll-section-2 .b {
+    top: 20%;
+    left: 53%;
+  }
+  #scroll-section-2 .c {
+    left: 55%;
   }
   .mid-message {
     font-size: 4vw;
