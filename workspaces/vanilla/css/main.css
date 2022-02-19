@@ -28,6 +28,7 @@ a {
 .global-nav {
   height: 44px;
   padding: 0 1rem;
+  z-index: 10;
 
   /* Animation에 영향을 미치지 않도록 DOM height에 잡히지 않게 조절하는 부분 */
   position: absolute;
@@ -39,6 +40,7 @@ a {
   height: 52px;
   border-bottom: 1px solid #ddd;
   padding: 0 1rem;
+  z-index: 11;
 
   /* Animation에 영향을 미치지 않도록 DOM height에 잡히지 않게 조절하는 부분 */
   position: absolute;
@@ -81,6 +83,9 @@ a {
 }
 
 #scroll-section-0 h1 {
+  position: relative;
+  top: -10vh;
+  z-index: 5;
   font-size: 4rem;
   text-align: center;
 }
@@ -138,6 +143,7 @@ a {
 .desc-message {
   width: 50%;
   font-weight: bold;
+  opacity: 0;
 }
 
 .pin {
@@ -187,6 +193,20 @@ body#show-scene-1 #scroll-section-1 .sticky-elem,
 body#show-scene-2 #scroll-section-2 .sticky-elem,
 body#show-scene-3 #scroll-section-3 .sticky-elem {
   display: block;
+}
+
+/* CANVAS */
+
+.sticky-elem-canvas {
+  top: 0;
+  height: 100%;
+}
+
+.sticky-elem-canvas canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
 }
 
 @media (min-width: 1024px) {
