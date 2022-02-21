@@ -79,6 +79,7 @@ a {
 }
 
 .scroll-section {
+  position: relative;
   padding-top: 50vh;
 }
 
@@ -206,7 +207,17 @@ body#show-scene-3 #scroll-section-3 .sticky-elem {
   position: absolute;
   top: 50%;
   left: 50%;
+}
 
+#scroll-section-3 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.image-blend-canvas {
+  /* border: 3px solid red; */
+  /* background-color: #888; */
 }
 
 @media (min-width: 1024px) {
