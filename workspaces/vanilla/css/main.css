@@ -244,6 +244,10 @@ body#show-scene-3 #scroll-section-3 .sticky-elem {
   transition: 0.5s;
 }
 
+/* 로딩 화면에서 스크롤이 되지 않게끔 처리 */
+.before-load {
+  overflow: hidden;
+}
 .before-load .loading {
   opacity: 1;
 }
