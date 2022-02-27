@@ -25,6 +25,10 @@ a {
   text-decoration: none;
 }
 
+.container {
+  overflow-x: hidden;
+}
+
 .global-nav {
   height: 44px;
   padding: 0 1rem;
@@ -55,6 +59,9 @@ a {
   top: 0;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: saturate(180%) blur(15px);
+  -webkit-backdrop-filter: saturate(180%) blur(15px);
+  -moz-backdrop-filter: saturate(180%) blur(15px);
+  -o-backdrop-filter: saturate(180%) blur(15px);
 }
 
 .global-nav-links,
@@ -179,7 +186,7 @@ a {
   font-size: 1.2rem;
   max-width: 1000px;
   opacity: 0;
-  margin: -5em auto 0;
+  margin: -24rem auto 0;
 }
 
 .footer {
@@ -226,7 +233,7 @@ body#show-scene-3 #scroll-section-3 .sticky-elem {
 }
 
 .image-blend-canvas.sticky {
-  position: sticky;
+  position: fixed;
   top: 0;
 }
 
@@ -326,6 +333,7 @@ body#show-scene-3 #scroll-section-3 .sticky-elem {
   .canvas-caption {
     padding: 0;
     font-size: 2rem;
+    margin-top: -8rem;
   }
 }
 

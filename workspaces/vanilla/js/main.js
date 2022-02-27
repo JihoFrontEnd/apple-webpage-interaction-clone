@@ -626,12 +626,17 @@
 
     // 로딩이 완료된 시점에 이벤트 등록
     window.addEventListener("resize", () => {
-      if (window.innerWidth > 600) setLayout();
-      // 문서 중간에서 브라우저를 리사이즈 했을 때를 대비한 관련 변수 초기화
-      sceneInfo[3].values.rectStartY = 0;
+      if (window.innerWidth > 900) {
+        setLayout();
+        // 문서 중간에서 브라우저를 리사이즈 했을 때를 대비한 관련 변수 초기화
+        sceneInfo[3].values.rectStartY = 0;
+      }
     });
     // 모바일 기기에서 가로/세로 모드로 변경할 때
-    window.addEventListener("orientationchange", setLayout);
+    window.addEventListener("orientationchange", () => {
+      // 바로 변경시키지 말고 약간의 텀을 두어 사용성을 개선하기 위해 setTimeout 사용
+      setTimeout(setLayout, 500);
+    });
     window.addEventListener("scroll", () => {
       yOffset = window.pageYOffset;
       scrollLoop();
