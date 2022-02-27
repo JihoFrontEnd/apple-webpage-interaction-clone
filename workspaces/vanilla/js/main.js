@@ -113,6 +113,10 @@
         rect1X: [0, 0, { start: 0, end: 0 }],
         rect2X: [0, 0, { start: 0, end: 0 }],
         rectStartY: 0,
+        blendHeight: [0, 0, { start: 0, end: 0 }],
+        canvas_scale: [0, 0, { start: 0, end: 0 }],
+        caption_opacity: [0, 1, { start: 0, end: 0 }],
+        caption_translateY: [20, 0, { start: 0, end: 0 }],
       },
     },
   ];
@@ -135,6 +139,14 @@
     }
   }
   setCanvasImages();
+
+  function checkMenu() {
+    if (yOffset > 44) {
+      document.body.classList.add('local-nav-sticky');
+    } else {
+      document.body.classList.remove('local-nav-sticky');
+    }
+  }
 
   /** Set scrollHeight per section */
   function setLayout() {
@@ -386,10 +398,49 @@
         let sequence2 = Math.round(calcValues(values.imageSequence, currentYOffset));
         objs.context.drawImage(objs.videoImages[sequence2], 0, 0);
 
+        //! 2 to 3 구간에서 canvas가 갑자기 나타나는 현상이 부자연스러워 미리 canvas를 그리는 작업
+        if (scrollRatio > 0.9) {
+          const objs = sceneInfo[3].objects;
+          const values = sceneInfo[3].values;
+
+          const widthRatio = window.innerWidth / objs.canvas.width;
+          const heightRatio = window.innerHeight / objs.canvas.height;
+          const canvasScaleRatio = widthRatio > heightRatio ? widthRatio : heightRatio;
+
+          objs.canvas.style.transform = `scale(${canvasScaleRatio})`;
+          objs.context.fillStyle = 'white';
+          objs.context.drawImage(objs.images[0], 0, 0);
+
+          const recalculatedInnerWidth = document.body.offsetWidth / canvasScaleRatio;
+          const recalculatedInnerHeight = window.innerHeight / canvasScaleRatio;
+
+          // Canvas 안에 그릴 좌우 직사각형
+          const whiteRectWidth = recalculatedInnerWidth * 0.15;
+          values.rect1X[0] = (objs.canvas.width - recalculatedInnerWidth) / 2;
+          values.rect1X[1] = values.rect1X[0] - whiteRectWidth;
+          values.rect2X[0] = values.rect1X[0] + recalculatedInnerWidth - whiteRectWidth;
+          values.rect2X[1] = values.rect2X[0] + whiteRectWidth;
+
+          // 좌우 흰색 박스 그리기
+          objs.context.fillRect(
+            parseInt(values.rect1X[0]), // x
+            0, // y
+            parseInt(whiteRectWidth), // width
+            objs.canvas.height // heightNum
+          );
+          objs.context.fillRect(
+            parseInt(values.rect2X[0]),
+            0,
+            parseInt(whiteRectWidth),
+            objs.canvas.height
+          );
+        }
+
         break;
 
       case 3:
         // console.log('3 play');
+        let step = 0;
         // 가로와 세로 크기가 윈도우에 가득차게 하기 위해 이 지점에서 처리
         const widthRatio = window.innerWidth / objs.canvas.width;
         const heightRatio = window.innerHeight / objs.canvas.height;
@@ -449,6 +500,57 @@
           parseInt(whiteRectWidth),
           objs.canvas.height);
 
+        if (scrollRatio < values.rect1X[2].end) {
+          // 캔버스가 화면 상단에 닿지 않았다면
+          step = 1;
+          objs.canvas.classList.remove('sticky');
+        } else {
+          step = 2;
+          objs.canvas.classList.add('sticky');
+          objs.canvas.style.top = `${-(objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2}px`;
+
+          values.blendHeight[0] = 0;
+          values.blendHeight[1] = objs.canvas.height;
+          values.blendHeight[2].start = values.rect1X[2].end;
+          values.blendHeight[2].end = values.blendHeight[2].start + 0.2; // 20%
+
+          const blendHeight = calcValues(values.blendHeight, currentYOffset);
+          objs.context.drawImage(
+            objs.images[1],
+            0, objs.canvas.height - blendHeight, objs.canvas.width, blendHeight,
+            0, objs.canvas.height - blendHeight, objs.canvas.width, blendHeight
+          );
+
+          if (scrollRatio > values.blendHeight[2].end) {
+            values.canvas_scale[0] = canvasScaleRatio;
+            values.canvas_scale[1] = document.body.offsetWidth / (objs.canvas.width * 1.5);
+            values.canvas_scale[2].start = values.blendHeight[2].end;
+            values.canvas_scale[2].end = values.canvas_scale[2].start + 0.2;
+
+            objs.canvas.style.transform = `scale(${calcValues(values.canvas_scale, currentYOffset)})`;
+            objs.canvas.style.marginTop = 0;
+          }
+
+          // Canvas가 다 축소된 시점부터 sticky 설정을 제거하고 보통 스크롤 영역이 등장하게끔 설정
+          // 스크롤을 쭉쭉 내리면서 와서 position fixed를 제거하면 이미 문서는 한참 내려왔기 때문에
+          // 동시에 margin top을 주어서 문서가 이어지게 설정한다.
+          if (
+            scrollRatio > values.canvas_scale[2].end &&
+            values.canvas_scale[2].end > 0
+          ) {
+            objs.canvas.classList.remove('sticky');
+            objs.canvas.style.marginTop = `${scrollHeight * 0.4}px`;
+
+            values.caption_opacity[2].start = values.canvas_scale[2].end;
+            values.caption_opacity[2].end = values.caption_opacity[2].start + 0.1;
+            objs.canvasCaption.style.opacity = calcValues(values.caption_opacity, currentYOffset);
+            values.caption_translateY[2].start = values.caption_opacity[2].start;
+            values.caption_translateY[2].end = values.caption_opacity[2].end;
+            objs.canvasCaption.style.transform = `translate3d(0, ${calcValues(values.caption_translateY, currentYOffset)}%, 0)`;
+
+          }
+        }
+
         break;
     }
   }
@@ -491,6 +593,7 @@
   window.addEventListener("scroll", () => {
     yOffset = window.pageYOffset;
     scrollLoop();
+    checkMenu();
   });
 
 })();
