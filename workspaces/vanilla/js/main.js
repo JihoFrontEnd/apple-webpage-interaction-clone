@@ -624,6 +624,18 @@
     sceneInfo[0].objects.context.drawImage(sceneInfo[0].objects.videoImages[0], 0, 0);
     document.body.classList.remove("before-load");
 
+    // 문서 중간에서 새로고침했을 경우 살짝 스크롤을 해줌으로써 렌더링이 정상적으로 동작하게 한다.
+    setTimeout(() => {
+      if (yOffset === 0) return;
+      let tempYOffset = yOffset;
+      let tempScrollCount = 0;
+      let siId = setInterval(() => {
+        if (++tempScrollCount > 20) clearInterval(siId);
+        tempYOffset += 5;
+        window.scrollTo(0, tempYOffset);
+      }, 20);
+    }, 50);
+
     // 로딩이 완료된 시점에 이벤트 등록
     window.addEventListener("resize", () => {
       if (window.innerWidth > 900) {
@@ -649,6 +661,8 @@
     document.querySelector('.loading').addEventListener('transitionend', (e) => {
       document.body.removeChild(e.currentTarget);
     });
+
+    // setTimeout(() => window.scrollTo(0, 200), 1000);
   });
   setCanvasImages();
 
