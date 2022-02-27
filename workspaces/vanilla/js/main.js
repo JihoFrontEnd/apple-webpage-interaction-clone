@@ -4,6 +4,12 @@
   let currentScene = 0;
   let isEnterAnotherScene = false;
 
+  // 부드러운 애니메이션 처리 변수(가속)
+  let acc = 0.16180339887;
+  let delayedYOffset = 0;
+  let rafId;
+  let rafState;
+
   const sceneInfo = [
     {
       // 0
@@ -138,7 +144,6 @@
       sceneInfo[3].objects.images.push(imgElem);
     }
   }
-  setCanvasImages();
 
   function checkMenu() {
     if (yOffset > 44) {
@@ -299,8 +304,8 @@
         }
 
         // CANVAS
-        let sequence = Math.round(calcValues(values.imageSequence, currentYOffset));
-        objs.context.drawImage(objs.videoImages[sequence], 0, 0);
+        // let sequence = Math.round(calcValues(values.imageSequence, currentYOffset));
+        // objs.context.drawImage(objs.videoImages[sequence], 0, 0);
         objs.canvas.style.opacity = calcValues(values.canvas_opacity, currentYOffset);
 
         break;
@@ -395,8 +400,9 @@
           objs.canvas.style.opacity = calcValues(values.canvas_opacity_out, currentYOffset);
         }
 
-        let sequence2 = Math.round(calcValues(values.imageSequence, currentYOffset));
-        objs.context.drawImage(objs.videoImages[sequence2], 0, 0);
+        // 부드러운 이미지 처리로 인한 주석처리
+        // let sequence2 = Math.round(calcValues(values.imageSequence, currentYOffset));
+        // objs.context.drawImage(objs.videoImages[sequence2], 0, 0);
 
         //! 2 to 3 구간에서 canvas가 갑자기 나타나는 현상이 부자연스러워 미리 canvas를 그리는 작업
         if (scrollRatio > 0.9) {
@@ -564,13 +570,15 @@
       prevScrollHeight += sceneInfo[i].scrollHeight;
     }
 
-    if (yOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
+    // yOffset -> delayedYOffset
+    if (delayedYOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
       isEnterAnotherScene = true;
       currentScene++;
       document.body.setAttribute("id", `show-scene-${currentScene}`);
     }
 
-    if (yOffset < prevScrollHeight) {
+    // yOffset -> delayedYOffset
+    if (delayedYOffset < prevScrollHeight) {
       isEnterAnotherScene = true;
       // 간혹 yOffset 값이 음수까지 되는 브라우저가 존재해 index underflow가 발생하지 않게 예방
       if (currentScene == 0) return;
@@ -583,17 +591,53 @@
     playAnimation();
   }
 
+  // 부드러운 애니메이션 처리 함수
+  function loop() {
+
+    delayedYOffset = delayedYOffset + (yOffset - delayedYOffset) * acc;
+
+    if (!isEnterAnotherScene) {
+      if (currentScene === 0 || currentScene === 2) {
+        const currentYOffset = delayedYOffset - prevScrollHeight;
+        const objs = sceneInfo[currentScene].objects;
+        const values = sceneInfo[currentScene].values;
+        
+        let sequence = Math.round(calcValues(values.imageSequence, currentYOffset));
+        if (objs.videoImages[sequence])
+          objs.context.drawImage(objs.videoImages[sequence], 0, 0);
+      }
+    }
+
+    rafId = requestAnimationFrame(loop);
+
+    if (Math.abs(yOffset - delayedYOffset) < 1) {
+      cancelAnimationFrame(rafId);
+      rafState = false;
+    }
+  }
+
   // load와 DOMContentLoaded는 거의 유사하나 자세한 차이는 검색하자
   // window.addEventListener('load', setLayout);
   window.addEventListener("DOMContentLoaded", () => {
     setLayout();
     sceneInfo[0].objects.context.drawImage(sceneInfo[0].objects.videoImages[0], 0, 0);
   });
-  window.addEventListener("resize", setLayout);
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 600) setLayout();
+    // 문서 중간에서 브라우저를 리사이즈 했을 때를 대비한 관련 변수 초기화
+    sceneInfo[3].values.rectStartY = 0;
+  });
+  // 모바일 기기에서 가로/세로 모드로 변경할 때
+  window.addEventListener("orientationchange", setLayout);
   window.addEventListener("scroll", () => {
     yOffset = window.pageYOffset;
     scrollLoop();
     checkMenu();
+    if (!rafState) {
+      rafId = requestAnimationFrame(loop);
+      rafState = true;
+    }
   });
+  setCanvasImages();
 
 })();
