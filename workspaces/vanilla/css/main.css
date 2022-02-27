@@ -256,6 +256,10 @@ body#show-scene-3 #scroll-section-3 .sticky-elem {
 .before-load {
   overflow: hidden;
 }
+/* 문서 중간에 새로고침했을 경우 디자인 요소들을 제대로 보이기 위해 아예 안 보이게 설정 */
+.before-load .container {
+  display: none;
+}
 .before-load .loading {
   opacity: 1;
 }
