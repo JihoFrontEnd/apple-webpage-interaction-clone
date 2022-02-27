@@ -618,9 +618,11 @@
 
   // load와 DOMContentLoaded는 거의 유사하나 자세한 차이는 검색하자
   // window.addEventListener('load', setLayout);
-  window.addEventListener("DOMContentLoaded", () => {
+  // img가 다 로드될 때까지 기다리는 건 load 이벤트로 보인다.
+  window.addEventListener("load", () => {
     setLayout();
     sceneInfo[0].objects.context.drawImage(sceneInfo[0].objects.videoImages[0], 0, 0);
+    document.body.classList.remove("before-load");
   });
   window.addEventListener("resize", () => {
     if (window.innerWidth > 600) setLayout();
@@ -637,6 +639,9 @@
       rafId = requestAnimationFrame(loop);
       rafState = true;
     }
+  });
+  document.querySelector('.loading').addEventListener('transitionend', (e) => {
+    document.body.removeChild(e.currentTarget);
   });
   setCanvasImages();
 

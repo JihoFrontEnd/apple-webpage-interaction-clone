@@ -229,6 +229,60 @@ body#show-scene-3 #scroll-section-3 .sticky-elem {
   top: 0;
 }
 
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  background: white;
+  opacity: 0;
+  transition: 0.5s;
+}
+
+.before-load .loading {
+  opacity: 1;
+}
+
+@keyframes loading-spin-animation {
+  100% { transform:  rotate(360deg); }
+}
+
+@keyframes loading-circle-animation {
+  0% { stroke-dashoffset: 157; }
+  75% { stroke-dashoffset: -147; }
+  100% { stroke-dashoffset: -157; }
+}
+
+.loading-circle {
+  width: 54px;
+  height: 54px;
+  animation: loading-spin-animation 3s infinite;
+}
+
+.loading-circle circle {
+  stroke: black;
+  stroke-width: 4;
+  fill: transparent;
+
+  /* getTotalLength()로 stroke 길이를 구할 수도 있음 / 여기서는 직접 숫자 늘려가면서 구함 */
+  stroke-dasharray: 157;
+  animation: loading-circle-animation 1s infinite;
+}
+
+/* transition으로 사용할 경우 */
+/* .loading-circle circle {
+  ...
+  transition: 1s;
+}
+.loading-circle:hover circle {
+  stroke-dashoffset: -157;
+} */
+
 @media (min-width: 1024px) {
   #scroll-section-0 h1 {
     font-size: 9vw;
