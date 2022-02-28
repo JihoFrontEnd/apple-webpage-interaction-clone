@@ -570,10 +570,15 @@
       prevScrollHeight += sceneInfo[i].scrollHeight;
     }
 
+    if (delayedYOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
+      document.body.classList.remove('scroll-effect-end');
+    }
+
     // yOffset -> delayedYOffset
     if (delayedYOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
       isEnterAnotherScene = true;
-      currentScene++;
+      if (currentScene === sceneInfo.length - 1) document.body.classList.add('scroll-effect-end');
+      if (currentScene < sceneInfo.length - 1) currentScene++;
       document.body.setAttribute("id", `show-scene-${currentScene}`);
     }
 
@@ -639,15 +644,23 @@
     // 로딩이 완료된 시점에 이벤트 등록
     window.addEventListener("resize", () => {
       if (window.innerWidth > 900) {
-        setLayout();
+        // setLayout();
         // 문서 중간에서 브라우저를 리사이즈 했을 때를 대비한 관련 변수 초기화
-        sceneInfo[3].values.rectStartY = 0;
+        // sceneInfo[3].values.rectStartY = 0;
+
+        // Scene3에서 리사이즈 이벤트가 발생했을 경우엔 새로고침 하는 것이 유리하다.
+        // 일일이 재설정하는 것도 좋겠다만 그렇게까지 할 당위성은 부족하다.
+        window.location.reload();
       }
     });
     // 모바일 기기에서 가로/세로 모드로 변경할 때
     window.addEventListener("orientationchange", () => {
       // 바로 변경시키지 말고 약간의 텀을 두어 사용성을 개선하기 위해 setTimeout 사용
-      setTimeout(setLayout, 500);
+      // setTimeout(setLayout, 500);
+
+      // 가로/세로 모드 변경 시 단순하게 새로고침하는 것이 유리하다.
+      scrollTo(0, 0);
+      setTimeout(() => window.location.reload(), 500);
     });
     window.addEventListener("scroll", () => {
       yOffset = window.pageYOffset;

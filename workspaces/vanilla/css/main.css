@@ -213,6 +213,11 @@ body#show-scene-3 #scroll-section-3 .sticky-elem {
   will-change: transform, opacity;
 }
 
+/* 스크롤 이펙트가 끝나도(i.e. 문서 하단) 남아있는 sticky-elem들을 없애는 처리 */
+.scroll-effect-end .sticky-elem {
+  display: none !important;
+}
+
 /* CANVAS */
 
 .sticky-elem-canvas {
@@ -298,6 +303,10 @@ body#show-scene-3 #scroll-section-3 .sticky-elem {
 .loading-circle:hover circle {
   stroke-dashoffset: -157;
 } */
+
+.normal-content {
+  margin-bottom: 10rem;
+}
 
 @media (min-width: 1024px) {
   #scroll-section-0 h1 {
